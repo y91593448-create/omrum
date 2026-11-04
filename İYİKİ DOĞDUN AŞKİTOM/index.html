@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sevdiğimin Doğum Günü ❤️</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#ffd1e2,#fff0f5);
+    font-family: Arial, sans-serif;
+    color: #a83265;
+    text-align: center;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+.card {
+    position: relative;
+    z-index: 2;
+    background: white;
+    width: 100%;
+    max-width: 480px;
+    padding: 28px 20px;
+    border-radius: 25px;
+    box-shadow: 0 8px 30px #bd668855;
+    overflow: hidden;
+}
+
+h1 { color: #d94d83; }
+
+button {
+    border: none;
+    border-radius: 30px;
+    padding: 14px 24px;
+    background: #e95c91;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+button:active { transform: scale(.96); }
+
+.hidden { display: none !important; }
+
+.cake {
+    font-size: 100px;
+    margin: 5px 15px 15px;
+    line-height: 1;
+}
+
+.candles {
+    font-size: 40px;
+    margin: 15px;
+}
+
+.flame {
+    display: inline-block;
+    animation: flicker .4s infinite alternate;
+}
+
+@keyframes flicker {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+.extinguished .flame { visibility: hidden; }
+
+#status {
+    margin-top: 18px;
+    font-size: 15px;
+}
+
+#message {
+    margin-top: 22px;
+    line-height: 1.8;
+    font-size: 17px;
+    animation: fadeIn 2s ease;
+}
+
+.cake-photo-container {
+    width: 140px;
+    height: 140px;
+    margin: 15px auto 0;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(233,92,145,.3);
+    overflow: hidden;
+}
+
+.cake-photo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.gallery-item {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(233,92,145,.2);
+    border: 2px solid white;
+    aspect-ratio: 1/1;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s;
+}
+
+.gallery-item img:hover {
+    transform: scale(1.08);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Uçuşan çiçekler */
+.flower {
+    position: fixed;
+    z-index: 1;
+    bottom: -50px;
+    pointer-events: none;
+    animation: flowerFloat linear forwards;
+    opacity: .75;
+}
+
+@keyframes flowerFloat {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    15% { opacity: .8; }
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Kalp patlaması */
+.heart {
+    position: fixed;
+    z-index: 10;
+    pointer-events: none;
+    animation: heartFly 3s ease-out forwards;
+    font-size: 25px;
+}
+
+@keyframes heartFly {
+    0% {
+        transform: translate(0,0) scale(.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--x),var(--y)) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* İkinci sürpriz mektup */
+#extraSurprise {
+    margin-top: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg,#fff0f5,#ffe0eb);
+    border-radius: 20px;
+    animation: fadeIn 1.5s ease;
+    line-height: 1.9;
+}
+
+#extraSurprise h2 {
+    color: #d94d83;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Arka plan müziği -->
+<audio id="bgMusic" src="muzik.mp3" loop></audio>
+
+<div class="card" id="welcome">
+    <h1>İyi ki Doğdun Sevdiğim ❤️</h1>
+    <p>Bugün senin günün bebeğim.</p>
+    <p>Senin için hazırladığım sürprize hazır mısın? 🌹</p>
+    <button onclick="showCake()">Sürprizi Aç 💗</button>
+</div>
+
+<div class="card hidden" id="birthday">
+
+    <h1>İyi ki Doğdun Aşkım 🎂</h1>
+    <p>Bir dilek tut sevdiğim...</p>
+
+    <div class="cake-photo-container">
+        <img src="kapak.jpeg" alt="Doğum Günü Fotoğrafı">
+    </div>
+
+    <div class="cake">🎂</div>
+
+    <div class="candles" id="candles">
+        <span class="flame">🔥</span> 🕯️
+        <span class="flame">🔥</span> 🕯️
+        <span class="flame">🔥</span> 🕯️
+    </div>
+
+    <p>Mumları söndürmek için mikrofona doğru üfle. 💨</p>
+
+    <button id="micButton" onclick="startMicrophone()">
+        🎤 Mikrofonu Aç
+    </button>
+
+    <div id="status">Mikrofon izni bekleniyor...</div>
+
+    <div id="message" class="hidden">
+
+        <div class="gallery-container">
+            <div class="gallery-item"><img src="1.jpeg" alt="Fotoğraf 1"></div>
+            <div class="gallery-item"><img src="2.jpeg" alt="Fotoğraf 2"></div>
+            <div class="gallery-item"><img src="3.jpeg" alt="Fotoğraf 3"></div>
+            <div class="gallery-item"><img src="4.jpeg" alt="Fotoğraf 4"></div>
+            <div class="gallery-item"><img src="5.jpeg" alt="Fotoğraf 5"></div>
+            <div class="gallery-item"><img src="6.jpeg" alt="Fotoğraf 6"></div>
+            <div class="gallery-item"><img src="7.jpeg" alt="Fotoğraf 7"></div>
+            <div class="gallery-item"><img src="8.jpeg" alt="Fotoğraf 8"></div>
+            <div class="gallery-item"><img src="9.jpeg" alt="Fotoğraf 9"></div>
+        </div>
+
+        ❤️ <b>İyi ki Doğdun Ömrüm, İyi ki Varsın...</b> ❤️
+        <br><br>
+
+        Bugün sadece senin doğduğun gün değil; benim dünyama neşe, hayatıma anlam kattığın o en özel gün.
+        <br><br>
+
+        Biliyorum, bazen birbirimizi yorduğumuz, farkında olmadan kırdığımız günler oldu. Yaşanan her ne varsa, sevdamızın büyüklüğüne ve aramıza giren küçük gölgelere sayalım. Bugün tüm o kırgınlıkları geride bırakıp, sadece seninle çarpan kalbimin sesini duymanı istiyorum. Geçmişin tüm bulutlarını dağıtıp, seninle tertemiz, yepyeni ve apaydınlık bir sayfa açmaya hazırım.
+        <br><br>
+
+        Sen benim hayatımda başıma gelen en güzel şeysin. Yüzündeki o benzersiz gülümseme hiçbir zaman eksilmesin, çünkü o gülüş benim tüm dünyamı aydınlatıyor. Keşke tüm güzellikleri önüne serebilsem, ama şimdilik sana sadece ömrümün sonuna kadar arkasında duracağım kocaman, tertemiz bir aşk sözü verebiliyorum.
+        <br><br>
+
+        El ele, omuz omuza, çok daha huzurlu ve aşk dolu nice yaşlarımıza bir tanem. Doğum günün kutlu olsun, seni her şeyden çok seviyorum. 🌹🌼✨
+
+        <br><br>
+
+        <button onclick="openExtra()">Sana Bir Sürprizim Daha Var 💌</button>
+
+        <div id="extraSurprise" class="hidden">
+            <h2>Sevdiğime... ❤️</h2>
+
+            Gülüm, bebeğim, prensesim...
+
+            <br><br>
+
+            Hayatın bana getirdiği en güzel tesadüf sensin. Seninle geçireceğim her anın, paylaşacağımız her güzel hatıranın benim için çok kıymetli olduğunu bilmeni istiyorum.
+
+            <br><br>
+
+            Geçmişte ne yaşarsak yaşayalım, bundan sonra birbirimizi daha iyi anlamayı, daha çok dinlemeyi ve sevgimizi güzel davranışlarla büyütmeyi diliyorum.
+
+            <br><br>
+
+            Seninle nice doğum günlerine, nice güzel başlangıçlara, nice unutulmaz anılara...
+
+            <br><br>
+
+            İyi ki doğdun sevdiğim. İyi ki hayatımdasın. İyi ki sen... ❤️
+
+            <br><br>
+
+            <b>Seni çok seviyorum. 🌹🌼</b>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let audioContext = null;
+let analyser = null;
+let stream = null;
+let animationId = null;
+let blowingSince = 0;
+let finished = false;
+
+function showCake() {
+    document.getElementById("welcome").classList.add("hidden");
+    document.getElementById("birthday").classList.remove("hidden");
+
+    const music = document.getElementById("bgMusic");
+    music.volume = 0.02;
+    music.play().catch(e => console.log("Müzik:", e));
+}
+
+async function startMicrophone() {
+    const status = document.getElementById("status");
+    const button = document.getElementById("micButton");
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        status.textContent = "Tarayıcı mikrofonu desteklemiyor. Chrome ile açmayı dene.";
+        return;
+    }
+
+    button.disabled = true;
+    status.textContent = "Mikrofon izni bekleniyor...";
+
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+            }
+        });
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        await audioContext.resume();
+
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        status.textContent = "Mikrofon açık! Şimdi mumlara üfle 💨";
+        button.textContent = "🎤 Mikrofon Açık";
+
+        detectBlow();
+
+    } catch (error) {
+        status.textContent = "Mikrofon izni verilmedi. Tarayıcıdan mikrofon iznini aç.";
+        button.disabled = false;
+    }
+}
+
+function detectBlow() {
+    if (finished) return;
+
+    const data = new Uint8Array(analyser.fftSize);
+    analyser.getByteTimeDomainData(data);
+
+    let sum = 0;
+
+    for (let i = 0; i < data.length; i++) {
+        const value = (data[i] - 128) / 128;
+        sum += value * value;
+    }
+
+    const volume = Math.sqrt(sum / data.length);
+
+    if (volume > 0.045) {
+        if (blowingSince === 0) {
+            blowingSince = performance.now();
+        }
+
+        if (performance.now() - blowingSince > 350) {
+            extinguishCandles();
+            return;
+        }
+    } else {
+        blowingSince = 0;
+    }
+
+    animationId = requestAnimationFrame(detectBlow);
+}
+
+function extinguishCandles() {
+    if (finished) return;
+    finished = true;
+
+    document.getElementById("candles").classList.add("extinguished");
+    document.getElementById("status").textContent = "Dileğin kabul olsun sevdiğim! ❤️";
+    document.getElementById("micButton").classList.add("hidden");
+    document.getElementById("message").classList.remove("hidden");
+
+    // Mumlar sönünce kalp animasyonu
+    createHeartBurst();
+
+    // Müzik sesini yükselt
+    const music = document.getElementById("bgMusic");
+    music.volume = 1.0;
+    music.play().catch(e => console.log("Müzik çalma hatası:", e));
+
+    if (animationId) cancelAnimationFrame(animationId);
+
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+    }
+
+    if (audioContext) {
+        audioContext.close();
+    }
+}
+
+// Kalplerin uçuşması
+function createHeartBurst() {
+    const symbols = ["❤️","💕","💗","💖","🌹","🌼"];
+
+    for (let i = 0; i < 35; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+        heart.style.left = "50%";
+        heart.style.top = "50%";
+        heart.style.setProperty("--x", (Math.random() * 600 - 300) + "px");
+        heart.style.setProperty("--y", (Math.random() * 700 - 350) + "px");
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 3000);
+    }
+}
+
+// İkinci mektubu aç
+function openExtra() {
+    document.getElementById("extraSurprise").classList.remove("hidden");
+    createHeartBurst();
+
+    document.getElementById("extraSurprise").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+// Uçuşan güller ve papatyalar
+function createFlowers() {
+    const flowers = ["🌹","🌼","🌸","💗"];
+
+    const flower = document.createElement("div");
+    flower.className = "flower";
+    flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+
+    flower.style.left = Math.random() * 100 + "vw";
+    flower.style.fontSize = (18 + Math.random() * 15) + "px";
+    flower.style.animationDuration = (7 + Math.random() * 6) + "s";
+
+    document.body.appendChild(flower);
+
+    setTimeout(() => flower.remove(), 13000);
+}
+
+setInterval(createFlowers, 1200);
+
+</script>
+
+</body>
+</html>
